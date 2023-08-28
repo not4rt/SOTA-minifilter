@@ -1,6 +1,6 @@
 ﻿  Building 'MinifilterSOTA' with toolset 'WindowsKernelModeDriver10.0' and the 'Universal' target platform.
   Stamping x64\Debug\MinifilterSOTA.inf
-  Stamping [Version] section with DriverVer=08/28/2023,3.16.31.58
+  Stamping [Version] section with DriverVer=08/28/2023,4.12.15.536
   SotaMain.c
   MinifilterSOTA.vcxproj -> C:\Users\User\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA.sys
   Done Adding Additional Store

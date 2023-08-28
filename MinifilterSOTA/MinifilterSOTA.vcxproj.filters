@@ -33,9 +33,6 @@
     <ClCompile Include="DriverHandler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="KernelCommon.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sotamain.h">
@@ -45,9 +42,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DriverHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="KernelCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

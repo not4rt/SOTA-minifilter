@@ -30,7 +30,6 @@ Environment:
 
 
 #include <DriverHandler.h>
-#include <KernelCommon.h>
 
 
 /*************************************************************************

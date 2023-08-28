@@ -116,13 +116,11 @@
   <ItemGroup>
     <ClCompile Include="DriverHandler.c" />
     <ClCompile Include="HashMap.c" />
-    <ClCompile Include="KernelCommon.c" />
     <ClCompile Include="SotaMain.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DriverHandler.h" />
     <ClInclude Include="HashMap.h" />
-    <ClInclude Include="KernelCommon.h" />
     <ClInclude Include="SotaMain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

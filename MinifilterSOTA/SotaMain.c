@@ -230,7 +230,8 @@ Return Value:
         //DbgPrint("[SOTA] SotaPreOperationCallback: Compare %s - %s or %s", &Data->Iopb->TargetFileObject->FileName, L"\\Users\\", L"\\Users\\User\\AppData");
         return FLT_PREOP_SUCCESS_NO_CALLBACK;
     }
-    DbgPrint("[SOTA] SotaPreOperationCallback: Begin");
+    //DbgPrint("[SOTA] SotaPreOperationCallback: Begin");
+    NTSTATUS status = STATUS_SUCCESS;
     char MajorFunction[30];
     switch (Data->Iopb->MajorFunction) {
     case IRP_MJ_CREATE: {
@@ -255,21 +256,20 @@ Return Value:
     }
     };
 
-    PUNICODE_STRING processName = NULL;
-    NTSTATUS status = GetProcessNameByPid((HANDLE)FltGetRequestorProcessId(Data), &processName);
-    if (NT_SUCCESS(status) && processName) {
-        DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: %s - PID: %i - ProcessName: %wZ - FileName: %wZ\n", MajorFunction, FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
-        ExFreePool(processName);
-    }
-    else
-        DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: %s - PID: %i - FileName: %wZ", MajorFunction, FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
+    //PUNICODE_STRING processName = NULL;
+    //NTSTATUS status = GetProcessNameByPid((HANDLE)FltGetRequestorProcessId(Data), &processName);
+    //if (NT_SUCCESS(status) && processName) {
+        //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: %s - PID: %i - ProcessName: %wZ - FileName: %wZ\n", MajorFunction, FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
+        //ExFreePool(processName);
+    //}
+    //else
+        //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: %s - PID: %i - FileName: %wZ", MajorFunction, FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
     
     // CANARY FILES
     if ((Data->Iopb->MajorFunction == IRP_MJ_WRITE || Data->Iopb->MajorFunction == IRP_MJ_SET_INFORMATION) && StringStartsWithAnyPrefix(&Data->Iopb->TargetFileObject->FileName, CanaryFiles, CANARYFILES_COUNT)) {
         DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: CanaryFile modified. MajorFunction: %s - PID: %i - FileName: %wZ", MajorFunction, FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
         status = TerminateProcessByPid((HANDLE)FltGetRequestorProcessId(Data));
-        if (NT_SUCCESS(status))
-            DbgPrint("[SOTA-KILL] SotaPreOperationCallback: killed: %i\n", FltGetRequestorProcessId(Data));
+        DbgPrint("[SOTA-KILL] SotaPreOperationCallback: STATUS: 0x%x - PID: %i\n", status, FltGetRequestorProcessId(Data));
         return FLT_PREOP_COMPLETE;
     }
     return FLT_PREOP_SUCCESS_NO_CALLBACK;
@@ -371,23 +371,40 @@ GetProcessNameByPid(HANDLE pid, PUNICODE_STRING* ProcessName)
     return status;
 }
 
-NTSTATUS 
-TerminateProcessByPid(HANDLE pid)
+NTSTATUS TerminateProcessByPid(HANDLE pid)
 {
     DbgPrint("[SOTA-KILL] TerminateProcessByPid: Killing Process with PID: %p\n", pid);
     PEPROCESS Process;
     NTSTATUS status = PsLookupProcessByProcessId(pid, &Process);
     if (!NT_SUCCESS(status))
     {
+        DbgPrint("[SOTA-KILL] TerminateProcessByPid: Failed in lookup process: %p\n", pid);
+        return status;
+    }
+
+    // Get a handle to the process using ZwOpenProcess
+    HANDLE ProcessHandle;
+    OBJECT_ATTRIBUTES ObjectAttributes;
+    CLIENT_ID ClientId = { pid, 0 };
+
+    InitializeObjectAttributes(&ObjectAttributes, NULL, OBJ_KERNEL_HANDLE, NULL, NULL);
+    status = ZwOpenProcess(&ProcessHandle, PROCESS_ALL_ACCESS, &ObjectAttributes, &ClientId);
+    if (!NT_SUCCESS(status))
+    {
+        DbgPrint("[SOTA-KILL] TerminateProcessByPid: Failed to open process handle: %p\n", pid);
+        ObDereferenceObject(Process);
         return status;
     }
 
     // Use ZwTerminateProcess to terminate the process
-    status = ZwTerminateProcess((HANDLE)Process, STATUS_SUCCESS);
+    status = ZwTerminateProcess(ProcessHandle, STATUS_SUCCESS); // Here you should use a valid status code or just STATUS_SUCCESS
+    ZwClose(ProcessHandle); // Close the handle
     ObDereferenceObject(Process);
 
     return status;
 }
+
+
 
 BOOLEAN 
 StringStartsWithAnyPrefix(PUNICODE_STRING target, PWCHAR* PrefixList, int count)
