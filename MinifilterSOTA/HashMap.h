@@ -43,10 +43,10 @@ typedef struct HashMap HashMap;
 
 HashMap* initialize_map(void);
 void free_map(HashMap* map);
-NTSTATUS insert(HashMap* map, ULONG key, ULONG value);
-NTSTATUS remove(HashMap* map, ULONG key);
-NTSTATUS find_by_key(HashMap* map, ULONG key);
-NTSTATUS find_by_value(HashMap* map, ULONG value);
+NTSTATUS insert(HashMap* map, ULONG rawkey, ULONG value);
+NTSTATUS remove(HashMap* map, ULONG rawkey);
+ULONG find_by_key(HashMap* map, ULONG rawkey);
+ULONG find_by_value(HashMap* map, ULONG value);
 
 
 

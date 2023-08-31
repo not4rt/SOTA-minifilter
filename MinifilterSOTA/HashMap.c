@@ -42,10 +42,10 @@ void free_map(HashMap* map) {
     ExFreePoolWithTag(map, 'map1');
 }
 
-NTSTATUS insert(HashMap* map, int key, int value) {
+NTSTATUS insert(HashMap* map, ULONG rawkey, ULONG value) {
     KIRQL irql = KeGetCurrentIrql();
     KeAcquireSpinLock(&map->lock, &irql);
-    unsigned int idx = hash(key);
+    ULONG key = hash(rawkey);
     Entry* new_entry = (Entry*)ExAllocatePool2(NonPagedPool, sizeof(Entry), 'ent1');
     if (!new_entry) {
         KeReleaseSpinLock(&map->lock, irql);
@@ -55,11 +55,11 @@ NTSTATUS insert(HashMap* map, int key, int value) {
     new_entry->value = value;
     new_entry->next = NULL;
 
-    if (!map->buckets[idx]) {
-        map->buckets[idx] = new_entry;
+    if (!map->buckets[key]) {
+        map->buckets[key] = new_entry;
     }
     else {
-        Entry* current = map->buckets[idx];
+        Entry* current = map->buckets[key];
         while (current->next) {
             current = current->next;
         }
@@ -72,7 +72,7 @@ NTSTATUS insert(HashMap* map, int key, int value) {
     //if ((double)map->count / map->size > LOAD_FACTOR) {
     //    size_t new_size = map->size * 2;
     //    Entry** new_buckets = (Entry**)ExAllocatePool2(NonPagedPool, sizeof(Entry*) * new_size, 'bckt');
-    //    if (!new_buckets) return -1;
+    //    if (!new_buckets) return STATUS_UNSUCCESSFUL;
 
     //    for (size_t i = 0; i < new_size; i++) {
     //        new_buckets[i] = NULL;
@@ -98,16 +98,16 @@ NTSTATUS insert(HashMap* map, int key, int value) {
     return STATUS_SUCCESS;
 }
 
-NTSTATUS remove(HashMap* map, int key) {
+NTSTATUS remove(HashMap* map, ULONG rawkey) {
     KIRQL irql = KeGetCurrentIrql();
     KeAcquireSpinLock(&map->lock, &irql);
-    unsigned int idx = hash(key);
-    Entry* current = map->buckets[idx];
+    unsigned int key = hash(rawkey);
+    Entry* current = map->buckets[key];
     Entry* prev = NULL;
     while (current) {
         if (current->key == key) {
             if (prev == NULL) {
-                map->buckets[idx] = current->next;
+                map->buckets[key] = current->next;
             }
             else {
                 prev->next = current->next;
@@ -125,19 +125,19 @@ NTSTATUS remove(HashMap* map, int key) {
     return STATUS_UNSUCCESSFUL;  // Not found
 }
 
-int find_by_key(HashMap* map, int key) {
-    unsigned int idx = hash(key);
-    Entry* current = map->buckets[idx];
+ULONG find_by_key(HashMap* map, ULONG rawkey) {
+    unsigned int key = hash(rawkey);
+    Entry* current = map->buckets[key];
     while (current) {
         if (current->key == key) {
             return current->value;
         }
         current = current->next;
     }
-    return -1;  // Not found
+    return 0;  // Not found
 }
 
-int find_by_value(HashMap* map, int value) {
+ULONG find_by_value(HashMap* map, ULONG value) {
     for (size_t i = 0; i < map->size; i++) {
         Entry* current = map->buckets[i];
         while (current) {
@@ -147,7 +147,7 @@ int find_by_value(HashMap* map, int value) {
             current = current->next;
         }
     }
-    return -1;  // Not found
+    return 0;  // Not found
 }
 
 
@@ -177,7 +177,7 @@ int append_to_keylist(KeyList* list, int key) {
     if (list->count == list->capacity) {
         size_t new_capacity = list->capacity * 2;
         int* new_keys = (int*)ExAllocatePool2(NonPagedPool, sizeof(int) * new_capacity, 'karr');
-        if (!new_keys) return -1;
+        if (!new_keys) return STATUS_UNSUCCESSFUL;
 
         for (size_t i = 0; i < list->count; i++) {
             new_keys[i] = list->keys[i];
@@ -202,7 +202,7 @@ void free_keylist(KeyList* list) {
 }
 
 // Find all keys associated with a particular value.
-KeyList* find_keys_by_value(HashMap* map, int value) {
+KeyList* find_keys_by_value(HashMap* map, ULONG value) {
     KeyList* list = initialize_keylist();
     if (!list) return NULL;
 

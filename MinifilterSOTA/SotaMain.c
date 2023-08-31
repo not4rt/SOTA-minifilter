@@ -147,7 +147,7 @@ Return Value:
         return status;
     }
 
-    Globals.PidTable = initialize_map();
+    //Globals.PidTable = initialize_map();
 
     DbgPrint("[SOTA] DriverEntry: Success - STATUS: 0x%x\n", status);
     return status;
@@ -194,7 +194,7 @@ Return Value:
 
     PsSetCreateProcessNotifyRoutine(SOTAProcessCreateCallback, TRUE);
 
-    free_map(Globals.PidTable);
+    //free_map(Globals.PidTable);
 
     DbgPrint("[SOTA] SotaUnload: Finished");
     return STATUS_SUCCESS;
@@ -239,7 +239,11 @@ Return Value:
     if (FltGetRequestorProcessId(Data) == 4) // PID 4 is the system process
         return FLT_PREOP_SUCCESS_NO_CALLBACK;
     if (!StringStartsWithAnyPrefix(&Data->Iopb->TargetFileObject->FileName, CanaryFiles, CANARYFILES_COUNT)) {
-        //DbgPrint("[SOTA] SotaPreOperationCallback: Compare %s - %s or %s", &Data->Iopb->TargetFileObject->FileName, L"\\Users\\", L"\\Users\\User\\AppData");
+        //DbgPrint("[SOTA] SotaPreOperationCallback: Compare %wZ - %wZ or %wZ", &Data->Iopb->TargetFileObject->FileName, L"\\Users\\", L"\\Users\\User\\AppData");
+        return FLT_PREOP_SUCCESS_NO_CALLBACK;
+    }
+    DbgPrint("[SOTA] SotaPreOperationCallback: Compare %wZ - %wZ or %wZ\n", &Data->Iopb->TargetFileObject->FileName, L"\\Device\\HarddiskVolume3", L"\\Device\\HarddiskVolume4");
+    if (StringStartsWithAnyPrefix(&Data->Iopb->TargetFileObject->FileName, SafeDirectories, SAFEDIRECTORIES_COUNT)) {
         return FLT_PREOP_SUCCESS_NO_CALLBACK;
     }
     DbgPrint("[SOTA] SotaPreOperationCallback: Begin");
@@ -429,25 +433,25 @@ StringStartsWithAnyPrefix(PUNICODE_STRING target, PWCHAR* PrefixList, int count)
 }
 
 VOID SOTAProcessCreateCallback(HANDLE ParentId, HANDLE ProcessId, BOOLEAN Create) {
+
+    // New Process Created
+    DbgPrint("[SOTA] SOTAProcessCreateCallback: Begin");
+    NTSTATUS status = STATUS_SUCCESS;
+
+    PUNICODE_STRING currentProcessName = NULL;
+    status = GetProcessNameByPid(ParentId, &currentProcessName);
+    if (!NT_SUCCESS(status)) {
+        DbgPrint("[SOTA] SOTAProcessCreateCallback: Could not get parent process name. - PID: %d - STATUS: 0x%x\n", (ULONG)(ULONG_PTR)ProcessId, status);
+        return;
+    }
+
+    PUNICODE_STRING parentProcessName = NULL;
+    status = GetProcessNameByPid(ParentId, &parentProcessName);
+    if (!NT_SUCCESS(status)) {
+        DbgPrint("[SOTA] SOTAProcessCreateCallback: Could not get parent process name. - PID: %d - STATUS: 0x%x\n", (ULONG)(ULONG_PTR)ParentId, status);
+        return;
+    }
     if (Create) {
-        // New Process Created
-        DbgPrint("[SOTA] SOTAProcessCreateCallback: Begin");
-        NTSTATUS status = STATUS_SUCCESS;
-
-        PUNICODE_STRING currentProcessName = NULL;
-        status = GetProcessNameByPid(ParentId, &currentProcessName);
-        if (!NT_SUCCESS(status)) {
-            DbgPrint("[SOTA] SOTAProcessCreateCallback: Could not get parent process name. - PID: %d - STATUS: 0x%x\n", (ULONG)(ULONG_PTR)ProcessId, status);
-            return;
-        }
-
-        PUNICODE_STRING parentProcessName = NULL;
-        status = GetProcessNameByPid(ParentId, &parentProcessName);
-        if (!NT_SUCCESS(status)) {
-            DbgPrint("[SOTA] SOTAProcessCreateCallback: Could not get parent process name. - PID: %d - STATUS: 0x%x\n", (ULONG)(ULONG_PTR)ParentId, status);
-            return;
-        }
-
         if (StringStartsWithAnyPrefix(currentProcessName, SafeDirectories, SAFEDIRECTORIES_COUNT) && StringStartsWithAnyPrefix(parentProcessName, SafeDirectories, SAFEDIRECTORIES_COUNT)) {
             DbgPrint("[SOTA] SOTAProcessCreateCallback: New process, parent and current are safe. PID: %d - PROCESSNAME: %wZ - PARENTPID: %d - PARENTPROCESSNAME: %wZ\n", (ULONG)(ULONG_PTR)ProcessId, currentProcessName, (ULONG)(ULONG_PTR)ParentId, parentProcessName);
             if (currentProcessName) {
@@ -469,7 +473,7 @@ VOID SOTAProcessCreateCallback(HANDLE ParentId, HANDLE ProcessId, BOOLEAN Create
     else {
         // Old Process Killed, do nothing...
         DbgPrint("[SOTA] SOTAProcessCreateCallback: New process created. PID: %d - PROCESSNAME: %wZ - PARENTPID: %d - PARENTPROCESSNAME: %wZ\n", (ULONG)(ULONG_PTR)ProcessId, currentProcessName, (ULONG)(ULONG_PTR)ParentId, parentProcessName);
-        NTSTATUS status = insert(Globals.PidTable, (ULONG)ProcessId, (ULONG)ParentId);
+        //NTSTATUS status = insert(Globals.PidTable, (ULONG)ProcessId, (ULONG)ParentId);
         return;
     }
 }

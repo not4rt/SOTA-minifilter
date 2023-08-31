@@ -8,7 +8,7 @@ Class = "ActivityMonitor"
 ClassGuid = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
 Provider=%ManufacturerName%
 CatalogFile=MinifilterSOTA.cat
-DriverVer = 08/30/2023,9.45.40.773
+DriverVer = 08/31/2023,10.12.5.484
 PnpLockdown=1
 
 [DestinationDirs]

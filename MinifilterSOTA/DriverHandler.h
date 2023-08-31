@@ -5,7 +5,7 @@
 
 #include <fltKernel.h>
 #include <wdm.h>
-#include <HashMap.h>
+//#include <HashMap.h>
 
 //
 //  The global variable
@@ -22,7 +22,7 @@ typedef struct _SOTA_DRIVER_DATA {
     //
     //  PFID (Process Family ID) attributes
     //
-    HashMap* PidTable;      // Pid -> Pfid dictionary
+    //HashMap* PidTable;      // Pid -> Pfid dictionary
 
     //
     // Communication variables
