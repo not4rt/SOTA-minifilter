@@ -26,10 +26,8 @@ Environment:
 #include <wdm.h>
 #include <ntstrsafe.h>
 
-
-
-
 #include <DriverHandler.h>
+//#include <HashMap.h>
 
 
 /*************************************************************************
@@ -99,17 +97,28 @@ TerminateProcessByPid(
     HANDLE pid
 );
 
-PWCHAR SensitiveFolders[] = {
-    L"\\Users\\User\\Desktop",
-    L"\\Users\\User\\Documents",
-    L"\\Users\\User\\Downloads",
-    L"\\Users\\User\\OneDrive",
-    L"\\Users\\User\\Pictures",
+PWCHAR SafeDirectories[] = {
+    L"\\Device\\HarddiskVolume1",
+    L"\\Device\\HarddiskVolume2",
+    L"\\Device\\HarddiskVolume3",
+    L"\\Device\\HarddiskVolume4"
 };
-#define SENSITIVEFOLDERS_COUNT (sizeof(SensitiveFolders) / sizeof(PWCHAR))
+#define SAFEDIRECTORIES_COUNT (sizeof(SafeDirectories) / sizeof(PWCHAR))
+
+PWCHAR SensitiveDirectories[] = {
+    L"\\Users\\User\\"
+};
+#define SENSITIVEDIRECTORIES_COUNT (sizeof(SensitiveDirectories) / sizeof(PWCHAR))
 
 PWCHAR CanaryFiles[] = {
-    L"\\Users\\User\\Documents\\test_file_2.txt"
+    L"\\Users\\User\\a-sota.sql",
+    L"\\Users\\User\\sota.sql",
+    L"\\Users\\User\\Desktop\\a-sota.database",
+    L"\\Users\\User\\Desktop\\sota.database",
+    L"\\Users\\User\\Documents\\a-sota.txt",
+    L"\\Users\\User\\Documents\\sota.txt",
+    L"\\Users\\User\\Downloads\\a-sota.txt",
+    L"\\Users\\User\\Downloads\\sota.txt"
 };
 #define CANARYFILES_COUNT (sizeof(CanaryFiles) / sizeof(PWCHAR))
 
@@ -119,5 +128,8 @@ StringStartsWithAnyPrefix(
     PWCHAR* PrefixList,
     int count
 );
+
+VOID SOTAProcessCreateCallback(HANDLE ParentId, HANDLE ProcessId, BOOLEAN Create);
+
 
 #endif

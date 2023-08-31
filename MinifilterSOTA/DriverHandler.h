@@ -18,20 +18,17 @@ typedef struct _SOTA_DRIVER_DATA {
     PDRIVER_OBJECT  DriverObject;    // Driver Object for the minifilter
     ULONG           UsermodePid;     // PID of the SOTA Usermode application, set by communication
 
-    LIST_ENTRY      IrpOps;          // List of IRP Operations
-    ULONG           IrpOpsSize;      // Number of IRP Operations waiting in list_entry
-    KSPIN_LOCK      IrpOpsLock;      // Lock of the IrpOps list
-
-    LIST_ENTRY      RootDirs;        // List of protected directories
-    ULONG           RootDirsSize;    // Number of protected directories in list_entry
-    KSPIN_LOCK      RootDirsLock;    // Lock of RootDirectories list
-
 
     //
     //  PFID (Process Family ID) attributes
     //
     HashMap* PidTable;      // Pid -> Pfid dictionary
 
+    //
+    // Communication variables
+    //
+    PFLT_PORT KernelPort;
+    PFLT_PORT UserPort;
 
 #if DBG
     //

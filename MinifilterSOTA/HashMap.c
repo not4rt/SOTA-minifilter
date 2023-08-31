@@ -22,6 +22,10 @@ HashMap* initialize_map() {
         map->buckets[i] = NULL;
     }
 
+    map->idcount = 0;
+
+    KeInitializeSpinLock(&map->lock);
+
     return map;
 }
 
@@ -38,11 +42,15 @@ void free_map(HashMap* map) {
     ExFreePoolWithTag(map, 'map1');
 }
 
-int insert(HashMap* map, int key, int value) {
+NTSTATUS insert(HashMap* map, int key, int value) {
+    KIRQL irql = KeGetCurrentIrql();
+    KeAcquireSpinLock(&map->lock, &irql);
     unsigned int idx = hash(key);
     Entry* new_entry = (Entry*)ExAllocatePool2(NonPagedPool, sizeof(Entry), 'ent1');
-    if (!new_entry) return -1;
-
+    if (!new_entry) {
+        KeReleaseSpinLock(&map->lock, irql);
+        return STATUS_UNSUCCESSFUL;
+    }
     new_entry->key = key;
     new_entry->value = value;
     new_entry->next = NULL;
@@ -86,10 +94,13 @@ int insert(HashMap* map, int key, int value) {
     //    map->size = new_size;
     //}
 
-    return 0;
+    KeReleaseSpinLock(&map->lock, irql);
+    return STATUS_SUCCESS;
 }
 
-int remove(HashMap* map, int key) {
+NTSTATUS remove(HashMap* map, int key) {
+    KIRQL irql = KeGetCurrentIrql();
+    KeAcquireSpinLock(&map->lock, &irql);
     unsigned int idx = hash(key);
     Entry* current = map->buckets[idx];
     Entry* prev = NULL;
@@ -103,12 +114,15 @@ int remove(HashMap* map, int key) {
             }
             ExFreePoolWithTag(current, 'ent1');
             map->count--;
-            return 0; // Removed
+            KeReleaseSpinLock(&map->lock, irql);
+            return STATUS_SUCCESS; // Removed
         }
         prev = current;
         current = current->next;
     }
-    return -1;  // Not found
+
+    KeReleaseSpinLock(&map->lock, irql);
+    return STATUS_UNSUCCESSFUL;  // Not found
 }
 
 int find_by_key(HashMap* map, int key) {

@@ -25,15 +25,17 @@ Environment:
 #define INITIAL_SIZE 100
 
 typedef struct Entry {
-    int key;
-    int value;
+    ULONG key;
+    ULONG value;
     struct Entry* next;
 } Entry;
 
 struct HashMap {
     Entry** buckets;
-    size_t size;
-    size_t count;
+    ULONGLONG idcount; // how many ids were generated
+    size_t size; // total size of the map
+    size_t count; // actual size of the map
+    KSPIN_LOCK lock;
 };
 
 
@@ -41,10 +43,10 @@ typedef struct HashMap HashMap;
 
 HashMap* initialize_map(void);
 void free_map(HashMap* map);
-int insert(HashMap* map, int key, int value);
-int remove_entry(HashMap* map, int key);
-int find_by_key(HashMap* map, int key);
-int find_by_value(HashMap* map, int value);
+NTSTATUS insert(HashMap* map, ULONG key, ULONG value);
+NTSTATUS remove(HashMap* map, ULONG key);
+NTSTATUS find_by_key(HashMap* map, ULONG key);
+NTSTATUS find_by_value(HashMap* map, ULONG value);
 
 
 
