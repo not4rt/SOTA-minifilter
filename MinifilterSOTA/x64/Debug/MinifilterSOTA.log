@@ -1,13 +1,13 @@
 ﻿  Building 'MinifilterSOTA' with toolset 'WindowsKernelModeDriver10.0' and the 'Universal' target platform.
   Stamping x64\Debug\MinifilterSOTA.inf
-  Stamping [Version] section with DriverVer=08/31/2023,10.12.5.484
+  Stamping [Version] section with DriverVer=09/25/2023,5.35.0.77
   SotaMain.c
-  MinifilterSOTA.vcxproj -> C:\Users\User\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA.sys
+  MinifilterSOTA.vcxproj -> C:\Users\not4rt\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA.sys
   Done Adding Additional Store
-  Successfully signed: C:\Users\User\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA.sys
+  Successfully signed: C:\Users\not4rt\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA.sys
   
   Driver is 'Universal'.
-  .........................
+  ...........................
   Signability test complete.
   
   Errors:
@@ -17,7 +17,14 @@
   None
   
   Catalog generation complete.
-  C:\Users\User\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA\minifiltersota.cat
+  C:\Users\not4rt\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA\minifiltersota.cat
   Done Adding Additional Store
-  Successfully signed: C:\Users\User\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA\minifiltersota.cat
+  Successfully signed: C:\Users\not4rt\Desktop\MinifilterSOTA\x64\Debug\MinifilterSOTA\minifiltersota.cat
   
+C:\Users\not4rt\Desktop\MinifilterSOTA\MinifilterSOTA\SotaHash.c(17): warning C6011: Dereferencing NULL pointer '((PidTable3))->hh.tbl->buckets'. 
+C:\Users\not4rt\Desktop\MinifilterSOTA\MinifilterSOTA\SotaHash.c(17): warning C6387: '((((&((p))->hh))->tbl))->buckets' could be '0'.
+C:\Users\not4rt\Desktop\MinifilterSOTA\MinifilterSOTA\SotaHash.c(57): warning C6011: Dereferencing NULL pointer '((PFidTable))->hh.tbl->buckets'. 
+C:\Users\not4rt\Desktop\MinifilterSOTA\MinifilterSOTA\SotaHash.c(57): warning C6387: '((((&((pf))->hh))->tbl))->buckets' could be '0'.
+C:\Users\not4rt\Desktop\MinifilterSOTA\MinifilterSOTA\SotaMain.c(89): warning C28251: Inconsistent annotation for 'DriverEntry': this instance has no annotations. See c:\users\not4rt\desktop\minifiltersota\minifiltersota\sotamain.h(38). 
+C:\Users\not4rt\Desktop\MinifilterSOTA\MinifilterSOTA\SotaMain.c(91): warning C28251: Inconsistent annotation for 'DriverEntry': this instance has no annotations. See c:\users\not4rt\desktop\minifiltersota\minifiltersota\sotamain.h(38). Note: There are several prototypes for this function. This warning compares the first with instance number 3. 
+C:\Users\not4rt\Desktop\MinifilterSOTA\MinifilterSOTA\SotaMain.c(91): warning C28101: This function appears to be an unannotated DriverEntry function:  DriverEntry functions should be declared using the DRIVER_INITIALIZE function typedef.

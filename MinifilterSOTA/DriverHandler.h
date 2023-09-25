@@ -5,7 +5,7 @@
 
 #include <fltKernel.h>
 #include <wdm.h>
-//#include <HashMap.h>
+#include "SotaHash.h"
 
 //
 //  The global variable
@@ -22,7 +22,8 @@ typedef struct _SOTA_DRIVER_DATA {
     //
     //  PFID (Process Family ID) attributes
     //
-    //HashMap* PidTable;      // Pid -> Pfid dictionary
+    //PidHashMap* PidTable;      // Pid -> Pfid dictionary
+    //PFidHashMap* PFidTable;      // Pfid -> Pids dictionary
 
     //
     // Communication variables
@@ -41,42 +42,24 @@ typedef struct _SOTA_DRIVER_DATA {
 SOTA_DRIVER_DATA Globals;
 
 
+NTSTATUS mapProcess(
+    _In_ HANDLE Parent,
+    _In_ HANDLE Process
+);
 
-FORCEINLINE
-VOID
-SotaCancelFileOpen(
-    _Inout_ PFLT_CALLBACK_DATA Data,
-    _In_ PCFLT_RELATED_OBJECTS FltObjects,
-    _In_ NTSTATUS Status
-)
-/*++
+NTSTATUS unmapProcess(
+    _In_ HANDLE Process
+);
 
-Routine Description:
+VOID clean_tables();
 
-    This function cancel the file open. This is supposed to be called at post create if
-    the I/O is cancelled.
+NTSTATUS
+GetProcessNameByPid(
+    HANDLE pid,
+    PUNICODE_STRING* ProcessName
+);
 
-Arguments:
-
-    Data - Pointer to the filter callbackData that is passed to us.
-
-    FltObjects - Pointer to the FLT_RELATED_OBJECTS data structure containing
-        opaque handles to this filter, instance, its associated volume and
-        file object.
-
-    Status - The status code to be returned for this IRP.
-
-Return Value:
-
-    None.
-
---*/
-
-{
-    FltCancelFileOpen(FltObjects->Instance, FltObjects->FileObject);
-    Data->IoStatus.Status = Status;
-    Data->IoStatus.Information = 0;
-}
+NTSTATUS kill_pfamily(int pid);
 
 
 #endif

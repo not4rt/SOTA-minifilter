@@ -86,44 +86,31 @@ SotaPostOperationCallback(
     _In_ FLT_POST_OPERATION_FLAGS Flags
 );
 
-NTSTATUS
-GetProcessNameByPid(
-    HANDLE pid,
-    PUNICODE_STRING* ProcessName
-);
 
 NTSTATUS
 TerminateProcessByPid(
     HANDLE pid
 );
 
-PWCHAR SafeDirectories[] = {
-    L"\\Device\\HarddiskVolume1",
-    L"\\Device\\HarddiskVolume2",
-    L"\\Device\\HarddiskVolume3",
-    L"\\Device\\HarddiskVolume4"
-};
-#define SAFEDIRECTORIES_COUNT (sizeof(SafeDirectories) / sizeof(PWCHAR))
-
 PWCHAR SensitiveDirectories[] = {
-    L"\\Users\\User\\"
+    L"\\Users\\"
 };
 #define SENSITIVEDIRECTORIES_COUNT (sizeof(SensitiveDirectories) / sizeof(PWCHAR))
 
 PWCHAR CanaryFiles[] = {
-    L"\\Users\\User\\a-sota.sql",
-    L"\\Users\\User\\sota.sql",
-    L"\\Users\\User\\Desktop\\a-sota.database",
-    L"\\Users\\User\\Desktop\\sota.database",
-    L"\\Users\\User\\Documents\\a-sota.txt",
-    L"\\Users\\User\\Documents\\sota.txt",
-    L"\\Users\\User\\Downloads\\a-sota.txt",
-    L"\\Users\\User\\Downloads\\sota.txt"
+    L"a-sota.txt"
 };
 #define CANARYFILES_COUNT (sizeof(CanaryFiles) / sizeof(PWCHAR))
 
 BOOLEAN
-StringStartsWithAnyPrefix(
+StringStartsWithAnySubstring(
+    PUNICODE_STRING target,
+    PWCHAR* PrefixList,
+    int count
+);
+
+BOOLEAN
+StringEndsWithAnySubstring(
     PUNICODE_STRING target,
     PWCHAR* PrefixList,
     int count

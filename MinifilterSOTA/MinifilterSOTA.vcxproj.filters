@@ -27,10 +27,13 @@
     <ClCompile Include="SotaMain.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HashMap.c">
+    <ClCompile Include="MyHashMap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DriverHandler.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SotaHash.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,10 +41,19 @@
     <ClInclude Include="sotamain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HashMap.h">
+    <ClInclude Include="MyHashMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DriverHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="uthash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SotaHash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utlist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
