@@ -60,7 +60,7 @@ Example macro architecture of file system drivers:
 
 ### Steps to install
 1. Deploy [the three files from the release page](https://github.com/not4rt/SOTA-minifilter/releases) (or the files you built) to the target machine.
-2. Right-click on "MinifilterSOTA.inf" and choose "Install". **Alternatively**, you can run:
+2. Right-click on "MinifilterSOTA.inf" and choose "Install". **Alternatively**, you can run on a elevated powershell:
    ```powershell
    pnputil -i -a "<path>/MinifilterSOTA.inf"
    ```
