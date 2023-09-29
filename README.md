@@ -2,6 +2,13 @@
 
 A C-based minifilter driver for State of the Art (SOTA) group.
 
+# Table of Contents
+1. [External Code](#external-Code)
+2. [Description](#Description)
+3. [What is a minifilter driver?](#What-is-a-minifilter-driver?)
+4. [Build](#Build)
+  4.1. [Pre-requisites to build](#Pre-requisites-to-build)
+  4.2. [Steps](#Steps)
 ## External Code
 
 Files that were not written by me:
@@ -43,7 +50,10 @@ Example macro architecture of file system drivers:
 | (optional) [**Sysinternals DebugView**](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) | DebugView to see kernel debug messages |
 
 ### Steps
-1. Deploy the 3 files from the release page (or the files you built) in the target machine.
-2. Right-click on "MinifilterSOTA.inf" and select "Install". Alternatively you can run ```powershell pnputil -i -a "\<path\>/MinifilterSOTA.inf```.
-3. Reboot
+1. Deploy the three files from the release page (or the files you built) to the target machine.
+2. Right-click on "MinifilterSOTA.inf" and choose "Install". **Alternatively**, you can run:
+   ```powershell
+   pnputil -i -a "<path>/MinifilterSOTA.inf"
+   ```
+4. Reboot your system.
 
