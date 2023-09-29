@@ -20,7 +20,7 @@ A C-based minifilter driver for State of the Art (SOTA) group.
 
 ## Description
 
-This minifilter tries to identify malicious group of processes by validating rules against all IRP sent to the filesystem.
+This minifilter tries to identify malicious processes by validating rules against all IRP sent to the filesystem.
 
 ## External Code
 
