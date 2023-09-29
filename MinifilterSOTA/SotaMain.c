@@ -39,12 +39,12 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
         SotaPreOperationCallback,
         SotaPostOperationCallback
     },
-    {
-        IRP_MJ_CLEANUP,
-        0,
-        SotaPreOperationCallback,
-        NULL
-    },
+    //{
+    //    IRP_MJ_CLEANUP,
+    //    0,
+    //    SotaPreOperationCallback,
+    //    NULL
+    //},
     {
         IRP_MJ_WRITE,
         0,
@@ -57,12 +57,12 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
         SotaPreOperationCallback,
         NULL
     },
-    {
+ /*   {
         IRP_MJ_DIRECTORY_CONTROL,
         0,
         SotaPreOperationCallback,
         NULL
-    },
+    },*/
     {
         IRP_MJ_OPERATION_END
     }
@@ -116,7 +116,7 @@ Return Value:
 
 --*/
 {
-    DbgPrint("[SOTA7] DriverEntry: Begin");
+    DbgPrint("[SOTA8] DriverEntry: Begin");
     UNREFERENCED_PARAMETER(RegistryPath);
     NTSTATUS status = STATUS_SUCCESS;
 
@@ -124,6 +124,8 @@ Return Value:
 
     RtlZeroMemory(&Globals, sizeof(Globals));
     Globals.DriverObject = DriverObject;
+
+    Globals.CommPortName = L"\\SOTAMinifilter";
 
     //
     //  Register with FltMgr to tell it our callback routines
@@ -164,6 +166,8 @@ Return Value:
     //if (Globals.PFidTable == NULL) {
     //    DbgPrint("[SOTA] DriverEntry: Failed to initialized PidTable.\n");
     //}
+
+
 
     DbgPrint("[SOTA] DriverEntry: Success - STATUS: 0x%x\n", status);
     return status;
@@ -257,8 +261,9 @@ Return Value:
 --*/
 {
     UNREFERENCED_PARAMETER(FltObjects);
-    UNREFERENCED_PARAMETER(CompletionContext); 
-    if (FltGetRequestorProcessId(Data) == 4) // PID 4 is the system process
+    UNREFERENCED_PARAMETER(CompletionContext);
+    ULONG PID = FltGetRequestorProcessId(Data);
+    if (PID == 4) // PID 4 is the system process
         return FLT_PREOP_SUCCESS_NO_CALLBACK;
     if (!StringStartsWithAnySubstring(&Data->Iopb->TargetFileObject->FileName, SensitiveDirectories, SENSITIVEDIRECTORIES_COUNT)) {
         //DbgPrint("[SOTA] SotaPreOperationCallback: FALSE Compare %wZ - %wZ", &Data->Iopb->TargetFileObject->FileName, L"\\Users\\");
@@ -267,53 +272,73 @@ Return Value:
     //DbgPrint("[SOTA] SotaPreOperationCallback: Begin");
     NTSTATUS status = STATUS_SUCCESS;
 
+    //PUNICODE_STRING processName = NULL;
+    //status = GetProcessNameByPid((HANDLE)FltGetRequestorProcessId(Data), &processName);
+    //if (!NT_SUCCESS(status)) {
+    //    DbgPrint("[SOTA] SotaPreOperationCallback: Could not get process name. - PID: %d - STATUS: 0x%x\n", (HANDLE)Data, status);
+    //    return FLT_PREOP_SUCCESS_NO_CALLBACK;
+    //}
+
+    struct SotaProcess* processStruct = find_process(PID);
+    if (processStruct == NULL) {
+        // Process not mapped
+        return FLT_PREOP_SUCCESS_NO_CALLBACK;
+    }
+    if (StringStartsWithAnySubstring(processStruct->Pname, SafeOrigins1, SAFEORIGINS_COUNT1)) {
+        //DbgPrint("[SOTA] SotaPreOperationCallback: FALSE Compare %wZ - %wZ", &Data->Iopb->TargetFileObject->FileName, L"\\Users\\");
+        return FLT_PREOP_SUCCESS_NO_CALLBACK;
+    }
+    if (!StringEndsWithAnySubstring(&Data->Iopb->TargetFileObject->FileName, SensitiveExtensions, SENSITIVEEXTENSIONS_COUNT)) {
+        return FLT_PREOP_SUCCESS_NO_CALLBACK;
+    }
 
     switch (Data->Iopb->MajorFunction) {
         case IRP_MJ_CREATE: {
-            //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_CREATE - PID: %i - ProcessName: %wZ - FileName: %wZ\n", FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
+            //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_CREATE - PID: %i - FileName: %wZ\n", PID, &Data->Iopb->TargetFileObject->FileName);
+            countIRP_pfamily(find_pfamily(processStruct->PFid), &Data->Iopb->TargetFileObject->FileName, 0);
+            if(StringEndsWithAnySubstring(processStruct->Pname, RansomwareFiles, RANSOMWAREFILES_COUNT))
+                DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_CREATE - PID: %i - ProcessName: %wZ- FileName: %wZ\n", PID, processStruct->Pname,&Data->Iopb->TargetFileObject->FileName);
             break;
         }
         case IRP_MJ_READ: {
-            //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_READ - PID: %i - ProcessName: %wZ - FileName: %wZ\n", FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
+            //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_READ - PID: %i - FileName: %wZ\n", PID, &Data->Iopb->TargetFileObject->FileName);
+            countIRP_pfamily(find_pfamily(processStruct->PFid), &Data->Iopb->TargetFileObject->FileName, 1);
+            if (StringEndsWithAnySubstring(processStruct->Pname, RansomwareFiles, RANSOMWAREFILES_COUNT))
+                DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_READ - PID: %i - ProcessName: %wZ- FileName: %wZ\n", PID, processStruct->Pname, &Data->Iopb->TargetFileObject->FileName);
             break;
         }
-        case IRP_MJ_CLEANUP: {
-            //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_CLEANUP - PID: %i - ProcessName: %wZ - FileName: %wZ\n", FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
-            break;
-        }
+        //case IRP_MJ_CLEANUP: {
+        //    DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_CLEANUP - PID: %i - FileName: %wZ\n", PID, &Data->Iopb->TargetFileObject->FileName);
+        //    break;
+        //}
         case IRP_MJ_WRITE: {
             if (StringEndsWithAnySubstring(&Data->Iopb->TargetFileObject->FileName, CanaryFiles, CANARYFILES_COUNT)) {
-                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Something tried to modify CanaryFile. MajorFunction: IRP_MJ_WRITE - PID: %i - FileName: %wZ", FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
-                status = kill_pfamily((int)FltGetRequestorProcessId(Data));
-                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Operation intercepted. MajorFunction: IRP_MJ_WRITE - PID: %i - FileName: %wZ", FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
+                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Something tried to modify CanaryFile. MajorFunction: IRP_MJ_WRITE - PID: %i - FileName: %wZ", PID, &Data->Iopb->TargetFileObject->FileName);
+                status = kill_pfamily((int)PID);
+                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Operation intercepted. MajorFunction: IRP_MJ_WRITE - PID: %i - FileName: %wZ", PID, &Data->Iopb->TargetFileObject->FileName);
                 return FLT_PREOP_COMPLETE;
             }
-            else {
-                //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_WRITE - PID: %i - ProcessName: %wZ - FileName: %wZ\n", FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
+            else if (StringEndsWithAnySubstring(&Data->Iopb->TargetFileObject->FileName, SensitiveExtensions, SENSITIVEEXTENSIONS_COUNT)){
+                //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_WRITE - PID: %i - FileName: %wZ\n", PID, &Data->Iopb->TargetFileObject->FileName);
+                countIRP_pfamily(find_pfamily(processStruct->PFid), &Data->Iopb->TargetFileObject->FileName, 2);
+                if (StringEndsWithAnySubstring(processStruct->Pname, RansomwareFiles, RANSOMWAREFILES_COUNT))
+                    DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_WRITE - PID: %i - ProcessName: %wZ- FileName: %wZ\n", PID, processStruct->Pname, &Data->Iopb->TargetFileObject->FileName);
             }
             break;
         }
         case IRP_MJ_SET_INFORMATION: {
             if (StringEndsWithAnySubstring(&Data->Iopb->TargetFileObject->FileName, CanaryFiles, CANARYFILES_COUNT)) {
-                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Something tried to modify CanaryFile. MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - FileName: %wZ", FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
-                status = kill_pfamily((int)FltGetRequestorProcessId(Data));
-                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Operation intercepted. MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - FileName: %wZ", FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
+                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Something tried to modify CanaryFile. MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - FileName: %wZ", PID, &Data->Iopb->TargetFileObject->FileName);
+                status = kill_pfamily((int)PID);
+                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Operation intercepted. MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - FileName: %wZ", PID, &Data->Iopb->TargetFileObject->FileName);
                 return FLT_PREOP_COMPLETE;
             }
-            else {
-                //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - ProcessName: %wZ - FileName: %wZ\n", FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
-            }
-            break;
-        }
-        case IRP_MJ_DIRECTORY_CONTROL: {
-            if (StringEndsWithAnySubstring(&Data->Iopb->TargetFileObject->FileName, CanaryFiles, CANARYFILES_COUNT)) {
-                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Something tried to modify CanaryFile. MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - FileName: %wZ", FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
-                status = kill_pfamily((int)FltGetRequestorProcessId(Data));
-                DbgPrint("[SOTA-CRITICAL] SotaPreOperationCallback: Operation intercepted. MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - FileName: %wZ", FltGetRequestorProcessId(Data), &Data->Iopb->TargetFileObject->FileName);
-                return FLT_PREOP_COMPLETE;
-            }
-            else {
-                //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - ProcessName: %wZ - FileName: %wZ\n", FltGetRequestorProcessId(Data), processName, &Data->Iopb->TargetFileObject->FileName);
+            else if (StringEndsWithAnySubstring(&Data->Iopb->TargetFileObject->FileName, SensitiveExtensions, SENSITIVEEXTENSIONS_COUNT)) {
+                //DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - FileName: %wZ\n", PID, &Data->Iopb->TargetFileObject->FileName);
+                countIRP_pfamily(find_pfamily(processStruct->PFid), &Data->Iopb->TargetFileObject->FileName, 3);
+                if (StringEndsWithAnySubstring(processStruct->Pname, RansomwareFiles, RANSOMWAREFILES_COUNT))
+                    DbgPrint("[SOTA] SotaPreOperationCallback: MajorFunction: IRP_MJ_SET_INFORMATION - PID: %i - ProcessName: %wZ- FileName: %wZ\n", PID, processStruct->Pname, &Data->Iopb->TargetFileObject->FileName);
+
             }
             break;
         }
@@ -431,7 +456,7 @@ NTSTATUS TerminateProcessByPid(HANDLE pid)
 }
 
 BOOLEAN
-StringStartsWithAnySubstring(PUNICODE_STRING target, PWCHAR* PrefixList, int count)
+StringStartsWithAnySubstring(const PUNICODE_STRING target, const PCWSTR* PrefixList, const int count)
 {
     UNICODE_STRING temp;
     for (int i = 0; i < count; i++)
@@ -448,7 +473,7 @@ StringStartsWithAnySubstring(PUNICODE_STRING target, PWCHAR* PrefixList, int cou
 }
 
 BOOLEAN
-StringEndsWithAnySubstring(PUNICODE_STRING target, PWCHAR* PrefixList, int count)
+StringEndsWithAnySubstring(const PUNICODE_STRING target, const PCWSTR* PrefixList, const int count)
 {
     UNICODE_STRING temp;
     for (int i = 0; i < count; i++)
@@ -465,34 +490,34 @@ StringEndsWithAnySubstring(PUNICODE_STRING target, PWCHAR* PrefixList, int count
 }
 
 NTSTATUS CreateCanaryFile(PFLT_FILTER Filter, PUNICODE_STRING FilePath) {
-    HANDLE fileHandle;
-    IO_STATUS_BLOCK ioStatusBlock;
-    OBJECT_ATTRIBUTES objAttributes;
-    NTSTATUS status;
+    //HANDLE fileHandle;
+    //IO_STATUS_BLOCK ioStatusBlock;
+    //OBJECT_ATTRIBUTES objAttributes;
+    //NTSTATUS status;
 
-    InitializeObjectAttributes(&objAttributes, FilePath, OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE, NULL, NULL);
+    //InitializeObjectAttributes(&objAttributes, FilePath, OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE, NULL, NULL);
 
-    status = FltCreateFile(Filter,
-        NULL,                   // Instance
-        &fileHandle,
-        FILE_WRITE_DATA,
-        &objAttributes,
-        &ioStatusBlock,
-        NULL,                   // AllocationSize
-        FILE_ATTRIBUTE_HIDDEN,  // Set the hidden attribute
-        0,                      // ShareAccess
-        FILE_OPEN_IF,
-        FILE_SYNCHRONOUS_IO_NONALERT,
-        NULL,                   // EaBuffer
-        0,                      // EaLength
-        0);                     // Flags
+    //status = FltCreateFile(Filter,
+    //    NULL,                   // Instance
+    //    &fileHandle,
+    //    FILE_WRITE_DATA,
+    //    &objAttributes,
+    //    &ioStatusBlock,
+    //    NULL,                   // AllocationSize
+    //    FILE_ATTRIBUTE_HIDDEN,  // Set the hidden attribute
+    //    0,                      // ShareAccess
+    //    FILE_OPEN_IF,
+    //    FILE_SYNCHRONOUS_IO_NONALERT,
+    //    NULL,                   // EaBuffer
+    //    0,                      // EaLength
+    //    0);                     // Flags
 
-    if (NT_SUCCESS(status))
-    {
-        ZwClose(fileHandle);
-    }
+    //if (NT_SUCCESS(status))
+    //{
+    //    ZwClose(fileHandle);
+    //}
 
-    return status;
+    return STATUS_SUCCESS;
 }
 
 
@@ -504,7 +529,7 @@ VOID SOTAProcessCreateCallback(HANDLE ParentId, HANDLE ProcessId, BOOLEAN Create
 
     if (Create) {
         //DbgPrint("[SOTA] SOTAProcessCreateCallback: New process created. PID: %d - PARENTPID: %d \n", (ULONG)(ULONG_PTR)ProcessId, (ULONG)(ULONG_PTR)ParentId);
-        status = mapProcess(ParentId, ProcessId);
+        status = mapProcessToParent(ParentId, ProcessId);
     }
     else {
         // Old Process Killed, unmap...
@@ -514,3 +539,5 @@ VOID SOTAProcessCreateCallback(HANDLE ParentId, HANDLE ProcessId, BOOLEAN Create
 
     return;
 }
+
+

@@ -8,7 +8,7 @@ Class = "ActivityMonitor"
 ClassGuid = {b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
 Provider=%ManufacturerName%
 CatalogFile=MinifilterSOTA.cat
-DriverVer = 09/25/2023,5.35.0.77
+DriverVer = 09/28/2023,22.34.38.865
 PnpLockdown=1
 
 [DestinationDirs]
@@ -58,7 +58,7 @@ Description     = %ServiceDescription%
 ServiceBinary   = %12%\%DriverName%.sys        ;%windir%\system32\drivers\
 Dependencies    = FltMgr
 ServiceType     = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
-StartType       = 3                            ;SERVICE_DEMAND_START
+StartType       = 0                            ;SERVICE_DEMAND_START
 ErrorControl    = 1                            ;SERVICE_ERROR_NORMAL
 ; Change the Load Order Group value
 LoadOrderGroup  = "MinifilterSOTA Activity Monitor"

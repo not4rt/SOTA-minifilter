@@ -27,9 +27,6 @@
     <ClCompile Include="SotaMain.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyHashMap.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DriverHandler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,9 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sotamain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MyHashMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DriverHandler.h">

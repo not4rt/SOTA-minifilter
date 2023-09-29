@@ -92,31 +92,78 @@ TerminateProcessByPid(
     HANDLE pid
 );
 
-PWCHAR SensitiveDirectories[] = {
-    L"\\Users\\"
+const PCWSTR SensitiveDirectories[] = {
+    L"\\"
 };
-#define SENSITIVEDIRECTORIES_COUNT (sizeof(SensitiveDirectories) / sizeof(PWCHAR))
+#define SENSITIVEDIRECTORIES_COUNT (sizeof(SensitiveDirectories) / sizeof(PCWSTR))
 
-PWCHAR CanaryFiles[] = {
-    L"a-sota.txt"
+const PCWSTR CanaryFiles[] = {
+    L"a-sota.txt",
+    L"DoNotTouch.txt"
 };
-#define CANARYFILES_COUNT (sizeof(CanaryFiles) / sizeof(PWCHAR))
+#define CANARYFILES_COUNT (sizeof(CanaryFiles) / sizeof(PCWSTR))
+
+const PCWSTR RansomwareFiles[] = {
+    L"ed01ebfbc9eb5bbea545af4d01bf5f1071661840480439c6e5babe8e080e41aa.exe"
+};
+#define RANSOMWAREFILES_COUNT (sizeof(RansomwareFiles) / sizeof(PCWSTR))
+
+const PCWSTR SensitiveExtensions[] = {
+    L"der", 
+    L"key", 
+    L"crt", 
+    L"pdf", 
+    L"pem",
+    L"sqlite3", 
+    L"sqlitedb", 
+    L"sql", 
+    L"mp3", 
+    L"wav", 
+    L"wmv", 
+    L"mpg", 
+    L"mp4", 
+    L"jpeg", 
+    L"png",
+    L"docx", 
+    L"doc", 
+    L"xlsm", 
+    L"xlsx", 
+    L"xls", 
+    L"pptx",
+    L"ppt",
+    L"txt"
+};
+#define SENSITIVEEXTENSIONS_COUNT (sizeof(SensitiveExtensions) / sizeof(PCWSTR))
+
+PCWSTR SafeOrigins1[] = {
+    //L"\\Device\\HarddiskVolume1\\Windows",
+    //L"\\Device\\HarddiskVolume2\\Windows",
+    //L"\\Device\\HarddiskVolume3\\Windows",
+    L"\\Device\\HarddiskVolume4\\Program Files(x86)\\",
+    L"\\Device\\HarddiskVolume4\\Program Files (x86)\\",
+    L"\\Device\\HarddiskVolume4\\Windows\\",
+    L"\\Users\\WDKRemoteUser\\AppData\\Local\\Programs\\Microsoft VS Code\\"
+};
+#define SAFEORIGINS_COUNT1 (sizeof(SafeOrigins1) / sizeof(PCWSTR))
 
 BOOLEAN
 StringStartsWithAnySubstring(
-    PUNICODE_STRING target,
-    PWCHAR* PrefixList,
-    int count
+    const PUNICODE_STRING target,
+    const PCWSTR* PrefixList,
+    const int count
 );
 
 BOOLEAN
 StringEndsWithAnySubstring(
-    PUNICODE_STRING target,
-    PWCHAR* PrefixList,
-    int count
+    const PUNICODE_STRING target,
+    const PCWSTR* PrefixList,
+    const int count
 );
+
+NTSTATUS CreateCanaryFile(PFLT_FILTER Filter, PUNICODE_STRING FilePath);
 
 VOID SOTAProcessCreateCallback(HANDLE ParentId, HANDLE ProcessId, BOOLEAN Create);
 
+#define MAX_PATH_LENGTH 260  // Maximum path length, adjust as needed
 
 #endif

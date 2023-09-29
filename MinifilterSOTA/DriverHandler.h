@@ -3,8 +3,6 @@
 #ifndef __DRIVERHANDLER_H__
 #define __DRIVERHANDLER_H__
 
-#include <fltKernel.h>
-#include <wdm.h>
 #include "SotaHash.h"
 
 //
@@ -16,7 +14,7 @@ typedef struct _SOTA_DRIVER_DATA {
     BOOLEAN         IsRunning;       // Status of the minifilter
     PFLT_FILTER     Filter;          // Global FLT_FILTER pointer. Apparentely many APIs need this
     PDRIVER_OBJECT  DriverObject;    // Driver Object for the minifilter
-    ULONG           UsermodePid;     // PID of the SOTA Usermode application, set by communication
+    ULONG           UserModePid;     // PID of the SOTA Usermode application, set by communication
 
 
     //
@@ -25,11 +23,21 @@ typedef struct _SOTA_DRIVER_DATA {
     //PidHashMap* PidTable;      // Pid -> Pfid dictionary
     //PFidHashMap* PFidTable;      // Pfid -> Pids dictionary
 
+
+    //sn99
+    ULONG irpOpsSize;      // number of irp ops waiting in entry_list
+    LIST_ENTRY irpOps;     // list entry bidirectional list of irp ops
+    KSPIN_LOCK irpOpsLock; // lock for irp list ops
+
     //
     // Communication variables
     //
-    PFLT_PORT KernelPort;
-    PFLT_PORT UserPort;
+    PCWSTR CommPortName;
+    PFLT_PORT CommUserPort;
+    PFLT_PORT CommKernelPort;
+
+    BOOLEAN isCommOpen;
+
 
 #if DBG
     //
@@ -41,8 +49,9 @@ typedef struct _SOTA_DRIVER_DATA {
 
 SOTA_DRIVER_DATA Globals;
 
+void mapProcessToItself(_In_ HANDLE Process);
 
-NTSTATUS mapProcess(
+NTSTATUS mapProcessToParent(
     _In_ HANDLE Parent,
     _In_ HANDLE Process
 );

@@ -97,6 +97,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -122,13 +123,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DriverHandler.c" />
-    <ClCompile Include="MyHashMap.c" />
     <ClCompile Include="SotaHash.c" />
     <ClCompile Include="SotaMain.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DriverHandler.h" />
-    <ClInclude Include="MyHashMap.h" />
     <ClInclude Include="SotaHash.h" />
     <ClInclude Include="SotaMain.h" />
     <ClInclude Include="uthash.h" />
