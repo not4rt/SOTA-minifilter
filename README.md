@@ -5,7 +5,8 @@ A C-based minifilter driver for State of the Art (SOTA) group.
 ## External Code
 
 Files that were not written by me:
-Utilizes "uthash.h" and "utlist.h" from [troydhanson/uthash](https://github.com/troydhanson/uthash) **with the necessary kernel-space modifications made by be**.
+
+"uthash.h" and "utlist.h" from [troydhanson/uthash](https://github.com/troydhanson/uthash) **with the necessary kernel-space modifications made by be**.
 
 ## Description
 
