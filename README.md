@@ -3,8 +3,8 @@
 A C-based minifilter driver for State of the Art (SOTA) group.
 
 # Table of Contents
-1. [External Code](#external-Code)
-2. [Description](#Description)
+1. [Description](#Description)
+2. [External Code](#external-Code)
 3. [What is a minifilter driver?](#What-is-a-minifilter-driver?)
 4. [Build (Optional)](#Build-(Optional))
 
@@ -16,15 +16,17 @@ A C-based minifilter driver for State of the Art (SOTA) group.
    5.1 [Pre-requisites to install and use it](#Pre-requisites-to-install-and-use-it)
    
    5.2 [Steps to install](#Steps-to-install)
+   
+
+## Description
+
+This minifilter tries to identify malicious group of processes by validating rules against all IRP sent to the filesystem.
+
 ## External Code
 
 Files that were not written by me:
 
 "uthash.h" and "utlist.h" from [troydhanson/uthash](https://github.com/troydhanson/uthash) **with the necessary kernel-space modifications made by be**.
-
-## Description
-
-This minifilter tries to identify malicious group of processes by validating rules against all IRP sent to the filesystem.
 
 ## What is a minifilter driver?
 
