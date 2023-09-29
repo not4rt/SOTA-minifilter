@@ -64,5 +64,6 @@ Example macro architecture of file system drivers:
    ```powershell
    pnputil -i -a "<path>/MinifilterSOTA.inf"
    ```
+3. Click "install" on the windows that pops up.
 4. Reboot your system.
 
