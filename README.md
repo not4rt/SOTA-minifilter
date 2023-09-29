@@ -59,7 +59,7 @@ Example macro architecture of file system drivers:
 | (optional) [**Sysinternals DebugView**](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) | DebugView to see kernel debug messages |
 
 ### Steps to install
-1. Deploy the three files from the release page (or the files you built) to the target machine.
+1. Deploy [the three files from the release page](https://github.com/not4rt/SOTA-minifilter/releases) (or the files you built) to the target machine.
 2. Right-click on "MinifilterSOTA.inf" and choose "Install". **Alternatively**, you can run:
    ```powershell
    pnputil -i -a "<path>/MinifilterSOTA.inf"
