@@ -27,7 +27,7 @@ Example macro architecture of file system drivers:
 | [**Microsoft Visual Studio Build Tools for C++**](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16) | To develop and build C++ code, install "Desktop development with C++ |
 | [**Windows SDK**](https://go.microsoft.com/fwlink/?linkid=2166460) | WDK needs a matching version of Windows SDK. |
 | [**Windows Driver Kit (WDK)**](https://go.microsoft.com/fwlink/?linkid=2166289) | The base kit to develop a driver |
-| (optional)[**LLVM and Clang**](https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1/LLVM-12.0.1-win64.exe) | In the rust version of the driver, LLVM is needed to generate bindings for the Windows Driver API (bindgen) |
+| (optional) [**LLVM and Clang**](https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1/LLVM-12.0.1-win64.exe) | In the rust version of the driver, LLVM is needed to generate bindings for the Windows Driver API (bindgen) |
 
 ### Steps
 1. Open the "MinifilterSOTA.sln" with [Visual Studio](https://visualstudio.microsoft.com/) and click "Build Solution".
@@ -38,9 +38,9 @@ Example macro architecture of file system drivers:
 ### Pre-requisites to install and use it
 | Name | Reason |
 | ---------------------------------------------- | -- |
-| [**Disable Secure Boot and in Testing Mode**](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/the-testsigning-boot-configuration-option) | To make Microsoft Windows accepts self-signed drivers |
+| [**Disable Secure Boot**](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/the-testsigning-boot-configuration-option) | To make Microsoft Windows accepts self-signed drivers |
 | [**Enable Driver Testing Mode**](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/the-testsigning-boot-configuration-option) | To make Microsoft Windows accepts self-signed drivers |
-| (optional)[**Sysinternals DebugView**](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) | DebugView to see kernel debug messages |
+| (optional) [**Sysinternals DebugView**](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) | DebugView to see kernel debug messages |
 
 ### Steps
 1. Move the 3 files from the release page (or the files you built) to the target machine.
