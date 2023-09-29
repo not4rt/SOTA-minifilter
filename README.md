@@ -6,9 +6,16 @@ A C-based minifilter driver for State of the Art (SOTA) group.
 1. [External Code](#external-Code)
 2. [Description](#Description)
 3. [What is a minifilter driver?](#What-is-a-minifilter-driver?)
-4. [Build](#Build)
-  4.1. [Pre-requisites to build](#Pre-requisites-to-build)
-  4.2. [Steps](#Steps)
+4. [Build (Optional)](#Build-(Optional))
+
+   4.1. [Pre-requisites to build](#Pre-requisites-to-build)
+   
+   4.2. [Steps to build](#Steps-to-build)
+5. [Instalation](#Instalation)
+   
+   5.1 [Pre-requisites to install and use it](#Pre-requisites-to-install-and-use-it)
+   
+   5.2 [Steps to install](#Steps-to-install)
 ## External Code
 
 Files that were not written by me:
@@ -27,7 +34,7 @@ Example macro architecture of file system drivers:
 
 ![filter-manager-architecture-1](https://github.com/not4rt/SOTA-minifilter/assets/128330203/b55870ce-580a-4734-b639-60bb3b7b8e26)
 
-## Build
+## Build (Optional)
 ### Pre-requisites to build
 | Name | Reason |
 | ---------------------------------------------- | -- |
@@ -36,7 +43,7 @@ Example macro architecture of file system drivers:
 | [**Windows Driver Kit (WDK)**](https://go.microsoft.com/fwlink/?linkid=2166289) | The base kit to develop a driver |
 | (optional) [**LLVM and Clang**](https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1/LLVM-12.0.1-win64.exe) | In the rust version of the driver, LLVM is needed to generate bindings for the Windows Driver API (bindgen) |
 
-### Steps
+### Steps to build
 1. Open the "MinifilterSOTA.sln" with [Visual Studio](https://visualstudio.microsoft.com/) and click "Build Solution".
 2. The default output is "x64\Debug\MinifilterSOTA" directory.
 
@@ -49,7 +56,7 @@ Example macro architecture of file system drivers:
 | [**Enable Driver Testing Mode**](https://learn.microsoft.com/en-us/windows-hardware/drivers/install/the-testsigning-boot-configuration-option) | To make Microsoft Windows accepts self-signed drivers |
 | (optional) [**Sysinternals DebugView**](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) | DebugView to see kernel debug messages |
 
-### Steps
+### Steps to install
 1. Deploy the three files from the release page (or the files you built) to the target machine.
 2. Right-click on "MinifilterSOTA.inf" and choose "Install". **Alternatively**, you can run:
    ```powershell
