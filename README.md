@@ -13,9 +13,9 @@ A C-based minifilter driver for State of the Art (SOTA) group.
    4.2. [Steps to build](#Steps-to-build)
 5. [**Instalation**](#Instalation)
    
-   5.1 [Pre-requisites to install and use it](#Pre-requisites-to-install-and-use-it)
+   5.1 [**Pre-requisites to install and use it**](#Pre-requisites-to-install-and-use-it)
    
-   5.2 [Steps to install](#Steps-to-install)
+   5.2 [**Steps to install**](#Steps-to-install)
    
 
 ## Description
