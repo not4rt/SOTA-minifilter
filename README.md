@@ -1,6 +1,6 @@
 # SOTA-Minifilter Driver
 
-A minifilter driver of State of the Art (SOTA) group.
+A minifilter driver for the annual challenge on college.
 
 # Table of Contents
 1. [Description](#Description)
