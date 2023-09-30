@@ -2,12 +2,27 @@
 #include "DriverHandler.h"
 
 PCWSTR SafeOrigins[] = {
-    //L"\\Device\\HarddiskVolume1\\Windows",
-    //L"\\Device\\HarddiskVolume2\\Windows",
-    //L"\\Device\\HarddiskVolume3\\Windows",
+    //hv1
+    L"\\Device\\HarddiskVolume1\\Windows\\",
+    L"\\Device\\HarddiskVolume1\\Program Files(x86)\\",
+    L"\\Device\\HarddiskVolume1\\Program Files (x86)\\",
+    L"\\Device\\HarddiskVolume1\\ProgramData\\Microsoft\\Windows Defender\\",
+    //hv2
+    L"\\Device\\HarddiskVolume2\\Windows\\",
+    L"\\Device\\HarddiskVolume2\\Program Files(x86)\\",
+    L"\\Device\\HarddiskVolume2\\Program Files (x86)\\",
+    L"\\Device\\HarddiskVolume2\\ProgramData\\Microsoft\\Windows Defender\\",
+    //hv3
+    L"\\Device\\HarddiskVolume3\\Windows\\",
+    L"\\Device\\HarddiskVolume3\\Program Files(x86)\\",
+    L"\\Device\\HarddiskVolume3\\Program Files (x86)\\",
+    L"\\Device\\HarddiskVolume3\\ProgramData\\Microsoft\\Windows Defender\\",
+    //hv4
+    L"\\Device\\HarddiskVolume4\\Windows\\",
     L"\\Device\\HarddiskVolume4\\Program Files(x86)\\",
     L"\\Device\\HarddiskVolume4\\Program Files (x86)\\",
-    L"\\Device\\HarddiskVolume4\\Windows\\",
+    L"\\Device\\HarddiskVolume4\\ProgramData\\Microsoft\\Windows Defender\\",
+    //others
     L"\\Users\\WDKRemoteUser\\AppData\\Local\\Programs\\Microsoft VS Code\\"
 };
 #define SAFEORIGINS_COUNT (sizeof(SafeOrigins) / sizeof(PCWSTR))

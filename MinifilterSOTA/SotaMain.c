@@ -69,7 +69,7 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 };
 
 //
-//  FilterRegistration defines what we want to filter
+//  FilterRegistration defines the routines we will use
 //
 
 CONST FLT_REGISTRATION FilterRegistration = {
@@ -490,33 +490,32 @@ StringEndsWithAnySubstring(const PUNICODE_STRING target, const PCWSTR* PrefixLis
 }
 
 NTSTATUS CreateCanaryFile(PFLT_FILTER Filter, PUNICODE_STRING FilePath) {
-    //HANDLE fileHandle;
-    //IO_STATUS_BLOCK ioStatusBlock;
-    //OBJECT_ATTRIBUTES objAttributes;
-    //NTSTATUS status;
+    HANDLE fileHandle;
+    IO_STATUS_BLOCK ioStatusBlock;
+    OBJECT_ATTRIBUTES objAttributes;
+    NTSTATUS status;
 
-    //InitializeObjectAttributes(&objAttributes, FilePath, OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE, NULL, NULL);
+    InitializeObjectAttributes(&objAttributes, FilePath, OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE, NULL, NULL);
 
-    //status = FltCreateFile(Filter,
-    //    NULL,                   // Instance
-    //    &fileHandle,
-    //    FILE_WRITE_DATA,
-    //    &objAttributes,
-    //    &ioStatusBlock,
-    //    NULL,                   // AllocationSize
-    //    FILE_ATTRIBUTE_HIDDEN,  // Set the hidden attribute
-    //    0,                      // ShareAccess
-    //    FILE_OPEN_IF,
-    //    FILE_SYNCHRONOUS_IO_NONALERT,
-    //    NULL,                   // EaBuffer
-    //    0,                      // EaLength
-    //    0);                     // Flags
+    status = FltCreateFile(Filter,
+        NULL,                   // Instance
+        &fileHandle,
+        FILE_WRITE_DATA,
+        &objAttributes,
+        &ioStatusBlock,
+        NULL,                   // AllocationSize
+        FILE_ATTRIBUTE_HIDDEN,  // Set the hidden attribute
+        0,                      // ShareAccess
+        FILE_OPEN_IF,
+        FILE_SYNCHRONOUS_IO_NONALERT,
+        NULL,                   // EaBuffer
+        0,                      // EaLength
+        0);                     // Flags
 
-    //if (NT_SUCCESS(status))
-    //{
-    //    ZwClose(fileHandle);
-    //}
-
+    if (NT_SUCCESS(status))
+    {
+        ZwClose(fileHandle);
+    }
     return STATUS_SUCCESS;
 }
 

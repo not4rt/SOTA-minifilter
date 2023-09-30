@@ -109,39 +109,54 @@ const PCWSTR RansomwareFiles[] = {
 #define RANSOMWAREFILES_COUNT (sizeof(RansomwareFiles) / sizeof(PCWSTR))
 
 const PCWSTR SensitiveExtensions[] = {
-    L"der", 
-    L"key", 
-    L"crt", 
-    L"pdf", 
+    L"crt",
+    L"der",
+    L"doc",
+    L"docx",
+    L"jpeg",
+    L"key",
+    L"mp3",
+    L"mp4",
+    L"mpg",
+    L"pdf",
     L"pem",
+    L"png",
+    L"ppt",
+    L"pptx",
+    L"sql",
     L"sqlite3", 
     L"sqlitedb", 
-    L"sql", 
-    L"mp3", 
+    L"txt",
     L"wav", 
-    L"wmv", 
-    L"mpg", 
-    L"mp4", 
-    L"jpeg", 
-    L"png",
-    L"docx", 
-    L"doc", 
+    L"wmv",
+    L"xls",
     L"xlsm", 
-    L"xlsx", 
-    L"xls", 
-    L"pptx",
-    L"ppt",
-    L"txt"
+    L"xlsx"
 };
 #define SENSITIVEEXTENSIONS_COUNT (sizeof(SensitiveExtensions) / sizeof(PCWSTR))
 
 PCWSTR SafeOrigins1[] = {
-    //L"\\Device\\HarddiskVolume1\\Windows",
-    //L"\\Device\\HarddiskVolume2\\Windows",
-    //L"\\Device\\HarddiskVolume3\\Windows",
+    //hv1
+    L"\\Device\\HarddiskVolume1\\Windows\\",
+    L"\\Device\\HarddiskVolume1\\Program Files(x86)\\",
+    L"\\Device\\HarddiskVolume1\\Program Files (x86)\\",
+    L"\\Device\\HarddiskVolume1\\ProgramData\\Microsoft\\Windows Defender\\",
+    //hv2
+    L"\\Device\\HarddiskVolume2\\Windows\\",
+    L"\\Device\\HarddiskVolume2\\Program Files(x86)\\",
+    L"\\Device\\HarddiskVolume2\\Program Files (x86)\\",
+    L"\\Device\\HarddiskVolume2\\ProgramData\\Microsoft\\Windows Defender\\",
+    //hv3
+    L"\\Device\\HarddiskVolume3\\Windows\\",
+    L"\\Device\\HarddiskVolume3\\Program Files(x86)\\",
+    L"\\Device\\HarddiskVolume3\\Program Files (x86)\\",
+    L"\\Device\\HarddiskVolume3\\ProgramData\\Microsoft\\Windows Defender\\",
+    //hv4
+    L"\\Device\\HarddiskVolume4\\Windows\\",
     L"\\Device\\HarddiskVolume4\\Program Files(x86)\\",
     L"\\Device\\HarddiskVolume4\\Program Files (x86)\\",
-    L"\\Device\\HarddiskVolume4\\Windows\\",
+    L"\\Device\\HarddiskVolume4\\ProgramData\\Microsoft\\Windows Defender\\",
+    //others
     L"\\Users\\WDKRemoteUser\\AppData\\Local\\Programs\\Microsoft VS Code\\"
 };
 #define SAFEORIGINS_COUNT1 (sizeof(SafeOrigins1) / sizeof(PCWSTR))

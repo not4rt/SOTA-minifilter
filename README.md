@@ -34,7 +34,7 @@ Minifilter or any other File System Filter Driver intercepts and modifies reques
 
 Example macro architecture of file system drivers:
 
-![filter-manager-architecture-1](https://github.com/not4rt/SOTA-minifilter/assets/128330203/b55870ce-580a-4734-b639-60bb3b7b8e26)
+![filter-manager-architecture-1](images/filter-manager-architecture-1.gif)
 
 ## Build (Optional)
 ### Pre-requisites to build
