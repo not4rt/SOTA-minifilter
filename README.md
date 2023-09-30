@@ -1,6 +1,6 @@
 # SOTA-Minifilter Driver
 
-A C-based minifilter driver for State of the Art (SOTA) group.
+A minifilter driver of State of the Art (SOTA) group.
 
 # Table of Contents
 1. [Description](#Description)
